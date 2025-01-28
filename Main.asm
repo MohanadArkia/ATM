@@ -24,72 +24,70 @@ section .text
     global _start
 
 _start:
-    MOV EAX, 4
-    MOV EBX, 1
-    MOV ECX, divider
-    MOV EDX, 27
-    INT 0x80
+    PUSH 27
+    PUSH divider
+    CALL PRINT_STRING
+    ADD ESP, 8
     CALL NEW_LINE
 
-    MOV EAX, 4
-    MOV EBX, 1
-    MOV ECX, greeting
-    MOV EDX, 15
-    INT 0x80
+    PUSH 15
+    PUSH greeting
+    CALL PRINT_STRING
+    ADD ESP, 8
     CALL NEW_LINE
 
-    MOV EAX, 4
-    MOV EBX, 1
-    MOV ECX, divider
-    MOV EDX, 27
-    INT 0x80
+    PUSH 27
+    PUSH divider
+    CALL PRINT_STRING
+    ADD ESP, 8
     CALL NEW_LINE
 
-    MOV EAX, 4
-    MOV EBX, 1
-    MOV ECX, option1
-    MOV EDX, 12
-    INT 0x80
+    PUSH 12
+    PUSH option1
+    CALL PRINT_STRING
+    ADD ESP, 8
     CALL NEW_LINE
 
-    MOV EAX, 4
-    MOV EBX, 1
-    MOV ECX, option2
-    MOV EDX, 11
-    INT 0x80
+    PUSH 11
+    PUSH option2
+    CALL PRINT_STRING
+    ADD ESP, 8
     CALL NEW_LINE
 
-    MOV EAX, 4
-    MOV EBX, 1
-    MOV ECX, option3
-    MOV EDX, 19
-    INT 0x80
+    PUSH 19
+    PUSH option3
+    CALL PRINT_STRING
+    ADD ESP, 8
     CALL NEW_LINE
 
-    MOV EAX, 4
-    MOV EBX, 1
-    MOV ECX, option4
-    MOV EDX, 8
-    INT 0x80
+    PUSH 8
+    PUSH option4
+    CALL PRINT_STRING
+    ADD ESP, 8
     CALL NEW_LINE
 
-    MOV EAX, 4
-    MOV EBX, 1
-    MOV ECX, select_an_option
-    MOV EDX, 19
-    INT 0x80
+    PUSH 19
+    PUSH select_an_option
+    CALL PRINT_STRING
+    ADD ESP, 8
 
     CALL INPUT
     CALL INPUT_CONTROLLER
-
     JMP _start
 
-ENTER_TO_CONTINUE:
+PRINT_STRING:
     MOV EAX, 4
     MOV EBX, 1
-    MOV ECX, press_enter_text
-    MOV EDX, 26
-    INT 0x80   
+    MOV ECX, [ESP+4]
+    MOV EDX, [ESP+8]
+    INT 0x80
+    RET
+
+ENTER_TO_CONTINUE:
+    PUSH 26
+    PUSH press_enter_text
+    CALL PRINT_STRING
+    ADD ESP, 8
     
     MOV EAX, 3
     MOV EBX, 0
@@ -99,25 +97,22 @@ ENTER_TO_CONTINUE:
     RET
 
 DISPLAY_BALANCE_OPTION:
-    MOV EAX, 4
-    MOV EBX, 1
-    MOV ECX, divider
-    MOV EDX, 27
-    INT 0x80
+    PUSH 27
+    PUSH divider
+    CALL PRINT_STRING
+    ADD ESP, 8
     CALL NEW_LINE
 
-    MOV EAX, 4
-    MOV EBX, 1
-    MOV ECX, balance_text
-    MOV EDX, 18
-    INT 0x80
+    PUSH 18
+    PUSH balance_text
+    CALL PRINT_STRING
+    ADD ESP, 8
     CALL NEW_LINE
 
-    MOV EAX, 4
-    MOV EBX, 1
-    MOV ECX, divider
-    MOV EDX, 27
-    INT 0x80
+    PUSH 27
+    PUSH divider
+    CALL PRINT_STRING
+    ADD ESP, 8
     CALL NEW_LINE
 
     CALL ENTER_TO_CONTINUE
@@ -125,33 +120,32 @@ DISPLAY_BALANCE_OPTION:
     RET
 
 DEPOSIT_OPTION:
-    MOV EAX, 4
-    MOV EBX, 1
-    MOV ECX, deposit_option
-    MOV EDX, 23
-    INT 0x80
+    PUSH 23
+    PUSH deposit_option
+    CALL PRINT_STRING
+    ADD ESP, 8
+
     CALL INPUT
     CALL ENTER_TO_CONTINUE
     CALL CLEAR_SCREEN
     RET
 
 WITHDRAW_OPTION:
-    MOV EAX, 4
-    MOV EBX, 1
-    MOV ECX, withdraw_option
-    MOV EDX, 26
-    INT 0x80
+    PUSH 26
+    PUSH withdraw_option
+    CALL PRINT_STRING
+    ADD ESP, 8
+
     CALL INPUT
     CALL ENTER_TO_CONTINUE
     CALL CLEAR_SCREEN
     RET
 
 CLEAR_SCREEN:
-    MOV EAX, 4
-    MOV EBX, 1
-    MOV ECX, clear_screen
-    MOV EDX, 8
-    INT 0x80
+    PUSH 8
+    PUSH clear_screen
+    CALL PRINT_STRING
+    ADD ESP, 8
     RET
 
 INPUT_CONTROLLER:
@@ -166,11 +160,11 @@ INPUT_CONTROLLER:
     JE EXIT
 
     ; Handle invalid input
-    MOV EAX, 4
-    MOV EBX, 1
-    MOV ECX, invalid_input
-    MOV EDX, 36
-    INT 0x80
+    PUSH 36
+    PUSH invalid_input
+    CALL PRINT_STRING
+    ADD ESP, 8
+    
     CALL NEW_LINE
     CALL ENTER_TO_CONTINUE
     CALL CLEAR_SCREEN
@@ -185,19 +179,17 @@ INPUT:
     RET
 
 NEW_LINE:
-    MOV EAX, 4
-    MOV EBX, 1
-    MOV ECX, new_line
-    MOV EDX, 1
-    INT 0x80
+    PUSH 1
+    PUSH new_line
+    CALL PRINT_STRING
+    ADD ESP, 8
     RET
 
 EXIT:
-    MOV EAX, 4
-    MOV EBX, 1
-    MOV ECX, bye_message
-    MOV EDX, 5
-    INT 0x80
+    PUSH 5
+    PUSH bye_message
+    CALL PRINT_STRING
+    ADD ESP, 8
     CALL NEW_LINE
     MOV EAX, 1
     XOR EBX, EBX
