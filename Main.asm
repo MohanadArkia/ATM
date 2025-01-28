@@ -21,54 +21,36 @@ section .bss
     press_enter_buffer   resb 2
 
 section .text
+    %macro PRINT 2
+        PUSH %1
+        PUSH %2
+        CALL PRINT_STRING
+        ADD ESP, 8
+    %endmacro
     global _start
-
 _start:
-    PUSH 27
-    PUSH divider
-    CALL PRINT_STRING
-    ADD ESP, 8
+    PRINT 27, divider
     CALL NEW_LINE
 
-    PUSH 15
-    PUSH greeting
-    CALL PRINT_STRING
-    ADD ESP, 8
+    PRINT 15, greeting
     CALL NEW_LINE
 
-    PUSH 27
-    PUSH divider
-    CALL PRINT_STRING
-    ADD ESP, 8
+    PRINT 27, divider
     CALL NEW_LINE
 
-    PUSH 12
-    PUSH option1
-    CALL PRINT_STRING
-    ADD ESP, 8
+    PRINT 12, option1
     CALL NEW_LINE
 
-    PUSH 11
-    PUSH option2
-    CALL PRINT_STRING
-    ADD ESP, 8
+    PRINT 11, option2
     CALL NEW_LINE
 
-    PUSH 19
-    PUSH option3
-    CALL PRINT_STRING
-    ADD ESP, 8
+    PRINT 19, option3
     CALL NEW_LINE
 
-    PUSH 8
-    PUSH option4
-    CALL PRINT_STRING
-    ADD ESP, 8
+    PRINT 8, option4
     CALL NEW_LINE
 
-    PUSH 19
-    PUSH select_an_option
-    CALL PRINT_STRING
+    PRINT 19, select_an_option
     ADD ESP, 8
 
     CALL INPUT
@@ -84,10 +66,7 @@ PRINT_STRING:
     RET
 
 ENTER_TO_CONTINUE:
-    PUSH 26
-    PUSH press_enter_text
-    CALL PRINT_STRING
-    ADD ESP, 8
+    PRINT 26, press_enter_text
     
     MOV EAX, 3
     MOV EBX, 0
@@ -97,22 +76,13 @@ ENTER_TO_CONTINUE:
     RET
 
 DISPLAY_BALANCE_OPTION:
-    PUSH 27
-    PUSH divider
-    CALL PRINT_STRING
-    ADD ESP, 8
+    PRINT 27, divider
     CALL NEW_LINE
 
-    PUSH 18
-    PUSH balance_text
-    CALL PRINT_STRING
-    ADD ESP, 8
+    PRINT 18, balance_text
     CALL NEW_LINE
 
-    PUSH 27
-    PUSH divider
-    CALL PRINT_STRING
-    ADD ESP, 8
+    PRINT 27, divider
     CALL NEW_LINE
 
     CALL ENTER_TO_CONTINUE
@@ -120,10 +90,7 @@ DISPLAY_BALANCE_OPTION:
     RET
 
 DEPOSIT_OPTION:
-    PUSH 23
-    PUSH deposit_option
-    CALL PRINT_STRING
-    ADD ESP, 8
+    PRINT 23, deposit_option
 
     CALL INPUT
     CALL ENTER_TO_CONTINUE
@@ -131,10 +98,7 @@ DEPOSIT_OPTION:
     RET
 
 WITHDRAW_OPTION:
-    PUSH 26
-    PUSH withdraw_option
-    CALL PRINT_STRING
-    ADD ESP, 8
+    PRINT 26, withdraw_option
 
     CALL INPUT
     CALL ENTER_TO_CONTINUE
@@ -142,10 +106,7 @@ WITHDRAW_OPTION:
     RET
 
 CLEAR_SCREEN:
-    PUSH 8
-    PUSH clear_screen
-    CALL PRINT_STRING
-    ADD ESP, 8
+    PRINT 8, clear_screen
     RET
 
 INPUT_CONTROLLER:
@@ -160,10 +121,7 @@ INPUT_CONTROLLER:
     JE EXIT
 
     ; Handle invalid input
-    PUSH 36
-    PUSH invalid_input
-    CALL PRINT_STRING
-    ADD ESP, 8
+    PRINT 36, invalid_input
     
     CALL NEW_LINE
     CALL ENTER_TO_CONTINUE
@@ -179,17 +137,11 @@ INPUT:
     RET
 
 NEW_LINE:
-    PUSH 1
-    PUSH new_line
-    CALL PRINT_STRING
-    ADD ESP, 8
+    PRINT 1, new_line
     RET
 
 EXIT:
-    PUSH 5
-    PUSH bye_message
-    CALL PRINT_STRING
-    ADD ESP, 8
+    PRINT 5, bye_message
     CALL NEW_LINE
     MOV EAX, 1
     XOR EBX, EBX
