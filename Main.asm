@@ -16,19 +16,21 @@ section .data
     balance_text      db "Your balance is: "                     , 0
 
 section .bss
-    balance              resd 1
-    input_buffer         resb 10
-    press_enter_buffer   resb 2
+    balance                     resd 1
+    balance_str_buffer          resb 10
+    input_buffer                resb 10
+    press_enter_buffer          resb 1
 
 section .text
-    %macro PRINT 2
+    %MACRO PRINT 2
         PUSH %1
         PUSH %2
         CALL PRINT_STRING
         ADD ESP, 8
-    %endmacro
+    %ENDMACRO
     global _start
 _start:
+
     PRINT 27, divider
     CALL NEW_LINE
 
@@ -51,11 +53,46 @@ _start:
     CALL NEW_LINE
 
     PRINT 19, select_an_option
-    ADD ESP, 8
 
     CALL INPUT
     CALL INPUT_CONTROLLER
     JMP _start
+
+CONVERT_STRING_TO_INT:
+    XOR EAX, EAX
+    XOR ECX, ECX
+
+CONVERT_STRING_TO_INT_LOOP:
+    MOV BL, [input_buffer + ECX]
+    CMP BL, 10
+    JE CONVERT_STRING_TO_INT_DONE
+
+    SUB BL, '0'
+    IMUL EAX, EAX, 10
+    ADD EAX, EBX
+
+    INC ECX
+    JMP CONVERT_STRING_TO_INT_LOOP
+
+CONVERT_STRING_TO_INT_DONE:
+    RET
+
+CONVERT_BALANCE_TO_STRING:
+    MOV EAX, [balance]
+    MOV EBX, 10
+    MOV ECX, balance_str_buffer + 9
+    ADD ECX, 1
+    MOV BYTE [ECX], 0
+
+REVERSE_BALANCE_DIGITS:
+    DEC ECX
+    XOR EDX, EDX
+    DIV EBX
+    ADD DL, '0'
+    MOV [ECX], DL
+    TEST EAX, EAX
+    JNZ REVERSE_BALANCE_DIGITS
+    RET
 
 PRINT_STRING:
     MOV EAX, 4
@@ -80,6 +117,9 @@ DISPLAY_BALANCE_OPTION:
     CALL NEW_LINE
 
     PRINT 18, balance_text
+
+    CALL CONVERT_BALANCE_TO_STRING
+    PRINT 10, balance_str_buffer
     CALL NEW_LINE
 
     PRINT 27, divider
@@ -91,8 +131,10 @@ DISPLAY_BALANCE_OPTION:
 
 DEPOSIT_OPTION:
     PRINT 23, deposit_option
-
     CALL INPUT
+    CALL CONVERT_STRING_TO_INT
+    ADD [balance], EAX
+
     CALL ENTER_TO_CONTINUE
     CALL CLEAR_SCREEN
     RET
