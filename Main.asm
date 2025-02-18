@@ -14,6 +14,7 @@ section .data
     clear_screen      db 0x1B, '[2J', 0x1B, '[H'                 , 0
     press_enter_text  db "Press enter to continue.."             , 0
     balance_text      db "Your balance is: "                     , 0
+    insufficient_text db "Insufficient funds"                    , 0
 
 section .bss
     balance                     resd 1
@@ -104,7 +105,6 @@ PRINT_STRING:
 
 ENTER_TO_CONTINUE:
     PRINT 26, press_enter_text
-    
     MOV EAX, 3
     MOV EBX, 0
     MOV ECX, press_enter_buffer
@@ -133,6 +133,7 @@ DEPOSIT_OPTION:
     PRINT 23, deposit_option
     CALL INPUT
     CALL CONVERT_STRING_TO_INT
+
     ADD [balance], EAX
 
     CALL ENTER_TO_CONTINUE
@@ -141,8 +142,25 @@ DEPOSIT_OPTION:
 
 WITHDRAW_OPTION:
     PRINT 26, withdraw_option
-
     CALL INPUT
+    CALL CONVERT_STRING_TO_INT
+
+    MOV EBX, [balance]
+    CMP EAX, EBX
+    JA INSUFFICIENT_FUNDS
+    SUB [balance], EAX
+
+    CALL ENTER_TO_CONTINUE
+    CALL CLEAR_SCREEN
+    RET
+
+INSUFFICIENT_FUNDS:
+    PRINT 27, divider
+    CALL NEW_LINE
+    PRINT 20, insufficient_text
+    CALL NEW_LINE
+    PRINT 27, divider
+    CALL NEW_LINE
     CALL ENTER_TO_CONTINUE
     CALL CLEAR_SCREEN
     RET
